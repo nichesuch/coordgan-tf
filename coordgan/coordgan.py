@@ -135,7 +135,7 @@ class CoordGAN(tf.keras.Model):
         vars = self.discriminator.trainable_variables
         vars += self.patch_discriminator.trainable_variables
         grads = tape.gradient(loss, vars)
-        self.d_optimizer.apply_gradients(zip(grads, vars))
+        self.d_optimizer.apply_gradients((grad, var) for (grad, var) in zip(grads, vars) if grad is not None)
 
         return {'d_loss': d_loss, 'gp_loss': gp_loss, 'patch_d_loss': struct_loss}
     
@@ -188,7 +188,7 @@ class CoordGAN(tf.keras.Model):
         vars += self.structure_net.trainable_variables
         vars += self.warp_net.trainable_variables
         grads = tape.gradient(loss, vars)
-        self.g_optimizer.apply_gradients(zip(grads, vars))        
+        self.g_optimizer.apply_gradients((grad, var) for (grad, var) in zip(grads, vars) if grad is not None)
 
         return {
             'g_loss': g_loss,
